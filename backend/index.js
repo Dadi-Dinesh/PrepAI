@@ -10,8 +10,12 @@ dotenv.config()
 
 const app = express()
 const PORT = process.env.PORT || 8080
+const url = process.env.FRONTEND_URL
 
-app.use(cors())
+app.use(cors({
+  origin:[`${url}`],
+  methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH']
+}))
 app.use(bodyParser.json())
 
 app.use('/auth', userRoutes)

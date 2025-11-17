@@ -9,10 +9,10 @@ const SignupForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
+  const url = process.env.NEXT_BACKEND_URL
   async function signup({ email, password }) {
     try {
-      const res = await fetch("http://localhost:8080/auth/signup", {
+      const res = await fetch(`${url}/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
