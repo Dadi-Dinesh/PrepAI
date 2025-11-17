@@ -9,9 +9,10 @@ const LoginForm = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
+  const url = process.env.NEXT_BACKEND_URL
 
   const login = async ({ email, password }) => {
-    const response = await fetch("http://localhost:8080/auth/login", {
+    const response = await fetch(`${url}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
