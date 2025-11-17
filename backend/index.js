@@ -14,7 +14,6 @@ const url = process.env.FRONTEND_URL
 
 app.use(cors({
   origin:[`${url}`],
-  methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH']
 }))
 app.use(bodyParser.json())
 
