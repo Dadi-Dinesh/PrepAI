@@ -12,9 +12,7 @@ const app = express()
 const PORT = process.env.PORT || 8080
 const url = process.env.FRONTEND_URL
 
-app.use(cors({
-  origin:[`${url}`],
-}))
+app.use(cors())
 app.use(bodyParser.json())
 
 app.use('/auth', userRoutes)
