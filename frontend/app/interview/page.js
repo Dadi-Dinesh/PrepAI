@@ -36,7 +36,7 @@ export default function InterviewPage() {
 
     try {
       const qna = QUESTIONS.map((q, i) => ({ question: q, answer: answers[i] }));
-      const response = await fetch(`${process.env.NEXT_BACKEND_URL}/interview/analyze`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/interview/analyze`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -196,8 +196,8 @@ export default function InterviewPage() {
                     type="button"
                     onClick={handleVoiceToggle}
                     className={`flex items - center gap - 2 px - 3 py - 1.5 rounded - full text - xs font - medium transition - all ${isRecording
-                        ? "bg-red-500 text-white"
-                        : "border border-[var(--border)] hover:bg-[var(--foreground)] hover:text-[var(--background)]"
+                      ? "bg-red-500 text-white"
+                      : "border border-[var(--border)] hover:bg-[var(--foreground)] hover:text-[var(--background)]"
                       }`}
                   >
                     {isRecording ? (

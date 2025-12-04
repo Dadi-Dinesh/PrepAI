@@ -12,7 +12,7 @@ const LoginForm = () => {
   const router = useRouter();
 
   const login = async ({ email, password }) => {
-    const response = await fetch(`${process.env.NEXT_BACKEND_URL}/auth/login`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
@@ -24,7 +24,7 @@ const LoginForm = () => {
         const data = await response.json();
         errorMessage = data.error || data.message || errorMessage;
       } catch {
-        errorMessage = `Login failed: ${response.status} ${response.statusText}`;
+        errorMessage = `Login failed: ${response.status} ${response.statusText} `;
       }
       throw new Error(errorMessage);
     }
