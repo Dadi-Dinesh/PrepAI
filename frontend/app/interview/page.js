@@ -36,7 +36,7 @@ export default function InterviewPage() {
 
     try {
       const qna = QUESTIONS.map((q, i) => ({ question: q, answer: answers[i] }));
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/interview/analyze`, {
+      const response = await fetch(`https://prepai-6jwi.onrender.com/interview/analyze`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -15,7 +15,7 @@ const SignupForm = () => {
 
   async function signup({ email, password }) {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URLL}/auth/signup`, {
+      const res = await fetch(`https://prepai-6jwi.onrender.com/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
