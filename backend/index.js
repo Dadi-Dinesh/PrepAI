@@ -17,6 +17,7 @@ app.use(bodyParser.json())
 
 app.use('/auth', userRoutes)
 app.use("/profile", profileRoutes)
+app.use("/interview", require('./routes/interviewRoutes'))
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`)

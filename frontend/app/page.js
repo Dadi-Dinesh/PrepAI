@@ -1,141 +1,97 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
-import Footer from "./components/Footer";
 import ThemeToggle from "./components/ThemeToggle";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white">
+    <div className="min-h-screen flex flex-col">
       {/* Navbar */}
-      <nav className="w-full border-b border-black dark:border-white bg-white dark:bg-black sticky top-0 z-50 backdrop-blur-sm bg-opacity-90 dark:bg-opacity-90">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          <Link href="/" className="text-2xl font-bold">
+      <nav className="w-full border-b border-[var(--border)] sticky top-0 z-50 bg-[var(--background)]/80 backdrop-blur-md">
+        <div className="max-w-6xl mx-auto px-6 h-16 flex justify-between items-center">
+          <Link href="/" className="text-xl font-bold tracking-tight">
             PrepAI
           </Link>
-          <div className="flex items-center gap-4">
-            <Link
-              href="/login"
-              className="px-4 py-2 border border-black dark:border-white rounded hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-all duration-200"
-            >
-              Login
-            </Link>
-            <Link
-              href="/signup"
-              className="px-4 py-2 bg-black dark:bg-white text-white dark:text-black rounded hover:opacity-80 transition-all duration-200"
-            >
-              Sign Up
-            </Link>
+
+          <div className="flex items-center gap-6">
+            <div className="hidden md:flex items-center gap-6 text-sm font-medium text-[var(--muted)]">
+              <Link href="/login" className="hover:text-[var(--foreground)] transition-colors">
+                Login
+              </Link>
+              <Link href="/signup" className="hover:text-[var(--foreground)] transition-colors">
+                Sign Up
+              </Link>
+            </div>
+            <div className="w-px h-4 bg-[var(--border)] hidden md:block"></div>
             <ThemeToggle />
           </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="relative w-full h-screen flex items-center justify-center overflow-hidden">
-        {/* Background Image */}
-        <div className="absolute inset-0 z-0">
-          <Image
-            src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1920&q=80"
-            alt="Interview background"
-            fill
-            className="object-cover opacity-20 dark:opacity-10"
-            priority
-          />
-        </div>
-
-        {/* Hero Content */}
-        <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
-          <h1 className="text-6xl md:text-8xl font-bold mb-6 leading-tight">
-            Ace Your Next Interview
-            <br />
-            <span className="text-gray-600 dark:text-gray-400">With AI</span>
-          </h1>
-          <p className="text-xl md:text-2xl mb-12 text-gray-700 dark:text-gray-300 max-w-2xl mx-auto">
-            Practice with AI-powered mock interviews. Get instant feedback and improve your skills.
-          </p>
-
-          {/* Search Component */}
-          <div className="max-w-2xl mx-auto mb-12">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search Job Roles to Practice"
-                className="w-full px-6 py-4 text-lg border-2 border-black dark:border-white rounded-lg bg-white dark:bg-black focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
-              />
-              <button className="absolute right-2 top-1/2 -translate-y-1/2 px-6 py-2 bg-black dark:bg-white text-white dark:text-black rounded-md hover:opacity-80 transition-all">
-                Search
-              </button>
-            </div>
+      <main className="flex-1 flex flex-col items-center justify-center px-6 py-24 text-center">
+        <div className="max-w-3xl space-y-8">
+          <div className="inline-block px-3 py-1 rounded-full border border-[var(--border)] text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
+            AI-Powered Interview Prep
           </div>
 
-          {/* CTA Buttons */}
-          <div className="flex gap-4 justify-center">
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-tight">
+            Master your next interview.
+          </h1>
+
+          <p className="text-lg md:text-xl text-[var(--muted)] max-w-xl mx-auto leading-relaxed">
+            Practice with an intelligent AI that adapts to your role, analyzes your responses, and gives you actionable feedback instantly.
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
             <Link
               href="/signup"
-              className="px-8 py-4 bg-black dark:bg-white text-white dark:text-black rounded-lg text-lg font-semibold hover:opacity-80 transition-all duration-200"
+              className="px-8 py-3 bg-[var(--foreground)] text-[var(--background)] rounded-full font-medium text-sm hover:opacity-90 transition-opacity"
             >
-              Get Started
+              Start Mock Interview
             </Link>
             <Link
               href="/login"
-              className="px-8 py-4 border-2 border-black dark:border-white rounded-lg text-lg font-semibold hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-all duration-200"
+              className="px-8 py-3 border border-[var(--border)] rounded-full font-medium text-sm hover:bg-[var(--foreground)] hover:text-[var(--background)] transition-all"
             >
               Login
             </Link>
           </div>
         </div>
-      </section>
+      </main>
 
-      {/* Features Section */}
-      <section className="py-24 px-6 bg-white dark:bg-black">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16">
-            Everything You Need to Succeed
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {/* Feature 1 */}
-            <div className="border border-black dark:border-white rounded-lg p-8 hover:shadow-lg transition-all duration-200">
-              <div className="text-4xl mb-4">🤖</div>
-              <h3 className="text-xl font-semibold mb-3">AI Mock Interview</h3>
-              <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
-                Practice with AI that adapts to your responses and asks follow-up questions just like a real interviewer.
+      {/* Features Grid */}
+      <section className="border-t border-[var(--border)]">
+        <div className="max-w-6xl mx-auto px-6 py-24">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div className="space-y-3">
+              <h3 className="text-lg font-semibold">Real-time Analysis</h3>
+              <p className="text-[var(--muted)] text-sm leading-relaxed">
+                Get instant feedback on your answers. Our AI analyzes your content, clarity, and relevance to the job description.
               </p>
             </div>
-
-            {/* Feature 2 */}
-            <div className="border border-black dark:border-white rounded-lg p-8 hover:shadow-lg transition-all duration-200">
-              <div className="text-4xl mb-4">⚡</div>
-              <h3 className="text-xl font-semibold mb-3">Instant Analysis</h3>
-              <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
-                Get detailed feedback on your answers immediately after each response, including strengths and areas for improvement.
+            <div className="space-y-3">
+              <h3 className="text-lg font-semibold">Role Specific</h3>
+              <p className="text-[var(--muted)] text-sm leading-relaxed">
+                Tailored questions for Frontend, Backend, Product Management, and more. Practice what actually matters.
               </p>
             </div>
-
-            {/* Feature 3 */}
-            <div className="border border-black dark:border-white rounded-lg p-8 hover:shadow-lg transition-all duration-200">
-              <div className="text-4xl mb-4">📊</div>
-              <h3 className="text-xl font-semibold mb-3">Skill Weakness Report</h3>
-              <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
-                Identify your weak areas with comprehensive reports that track your progress over time.
-              </p>
-            </div>
-
-            {/* Feature 4 */}
-            <div className="border border-black dark:border-white rounded-lg p-8 hover:shadow-lg transition-all duration-200">
-              <div className="text-4xl mb-4">💬</div>
-              <h3 className="text-xl font-semibold mb-3">Real-time Feedback</h3>
-              <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
-                Receive actionable feedback on your communication style, clarity, and technical knowledge as you speak.
+            <div className="space-y-3">
+              <h3 className="text-lg font-semibold">Voice & Text</h3>
+              <p className="text-[var(--muted)] text-sm leading-relaxed">
+                Speak your answers naturally or type them out. We support both modes to simulate real interview environments.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <Footer />
+      {/* Simple Footer */}
+      <footer className="border-t border-[var(--border)] py-8 text-center">
+        <p className="text-xs text-[var(--muted)]">
+          © {new Date().getFullYear()} PrepAI. All rights reserved.
+        </p>
+      </footer>
     </div>
   );
 }

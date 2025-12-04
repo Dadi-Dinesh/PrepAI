@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import ThemeToggle from "../components/ThemeToggle";
-import Footer from "../components/Footer";
 
 const QUESTIONS = [
   "Tell me about yourself and your experience relevant to this role.",
@@ -16,36 +15,51 @@ export default function InterviewPage() {
   const [role, setRole] = useState("Frontend Engineer");
   const [answers, setAnswers] = useState(Array(QUESTIONS.length).fill(""));
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [summary, setSummary] = useState("");
+  const [analysis, setAnalysis] = useState(null);
   const [isSummarizing, setIsSummarizing] = useState(false);
 
   const textAreaRef = useRef(null);
-
-  const generateSummary = () => {
-    const filled = answers.filter((a) => a.trim().length > 0);
-    const combined = filled.join(" ");
-    const short =
-      combined.length > 400 ? combined.slice(0, 390).trimEnd() + "…" : combined || "No answers recorded.";
-
-    return `For the ${role} role, your responses highlighted your experience, problem‑solving approach, and how you handle feedback. Here is a condensed view of what you shared: ${short}`;
-  };
 
   const handleBegin = () => {
     setStage("interview");
     setCurrentIndex(0);
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentIndex < QUESTIONS.length - 1) {
       setCurrentIndex((i) => i + 1);
       return;
     }
+
     setIsSummarizing(true);
-    setTimeout(() => {
-      setSummary(generateSummary());
+    setStage("summary");
+
+    try {
+      const qna = QUESTIONS.map((q, i) => ({ question: q, answer: answers[i] }));
+      const response = await fetch("http://localhost:8080/interview/analyze", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ role, qna }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to analyze interview");
+      }
+
+      const data = await response.json();
+      setAnalysis(data);
+    } catch (error) {
+      console.error("Error analyzing interview:", error);
+      setAnalysis({
+        summary: "Failed to generate analysis. Please try again.",
+        rating: "N/A",
+        areasOfFocus: [],
+      });
+    } finally {
       setIsSummarizing(false);
-      setStage("summary");
-    }, 600);
+    }
   };
 
   const handleAnswerChange = (value) => {
@@ -110,11 +124,11 @@ export default function InterviewPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-white dark:bg-black text-black dark:text-white">
-      {/* Navbar */}
-      <header className="border-b border-gray-200 dark:border-gray-800">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="text-lg font-semibold">
+    <div className="min-h-screen flex flex-col">
+      {/* Minimal Navbar */}
+      <header className="border-b border-[var(--border)] sticky top-0 bg-[var(--background)]/80 backdrop-blur-md z-10">
+        <div className="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
+          <Link href="/" className="font-bold tracking-tight">
             PrepAI
           </Link>
           <ThemeToggle />
@@ -123,138 +137,172 @@ export default function InterviewPage() {
 
       {/* Content */}
       <main className="flex-1">
-        <div className="max-w-3xl mx-auto px-4 py-12 space-y-8">
+        <div className="max-w-2xl mx-auto px-6 py-16">
           {stage === "setup" && (
-            <>
-              <section>
-                <p className="text-xs uppercase tracking-wide text-gray-500">Interview setup</p>
-                <h1 className="text-3xl font-semibold mt-2 mb-3">Start a new mock interview</h1>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Choose a role and then begin. You&apos;ll answer a few questions by typing or speaking, and we&apos;ll generate a concise summary for you.
+            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="space-y-2">
+                <p className="text-xs font-medium text-[var(--muted)] uppercase tracking-wider">Step 1 of 3</p>
+                <h1 className="text-3xl font-bold tracking-tight">Select your role</h1>
+                <p className="text-[var(--muted)]">
+                  We&apos;ll tailor the questions to match the position you&apos;re applying for.
                 </p>
-              </section>
+              </div>
 
-              <section className="border border-gray-200 dark:border-gray-800 rounded-xl p-6 space-y-4">
-                <div>
-                  <label className="text-sm font-medium mb-1 block">Role</label>
-                  <select
-                    value={role}
-                    onChange={(e) => setRole(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-black text-sm focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white"
-                  >
-                    <option>Frontend Engineer</option>
-                    <option>Backend Engineer</option>
-                    <option>Backend Engineer</option>
-                    <option>Product Manager</option>
-                    <option>Data Scientist</option>
-                  </select>
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Target Role</label>
+                  <div className="relative">
+                    <select
+                      value={role}
+                      onChange={(e) => setRole(e.target.value)}
+                      className="w-full appearance-none px-4 py-3 bg-transparent border border-[var(--border)] rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[var(--foreground)] transition-shadow"
+                    >
+                      <option>Frontend Engineer</option>
+                      <option>Backend Engineer</option>
+                      <option>Full Stack Engineer</option>
+                      <option>Product Manager</option>
+                      <option>Data Scientist</option>
+                    </select>
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[var(--muted)]">
+                      <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </div>
+                  </div>
                 </div>
 
                 <button
                   type="button"
                   onClick={handleBegin}
-                  className="w-full py-2.5 bg-black dark:bg-white text-white dark:text-black rounded-md text-sm font-medium hover:opacity-90 transition"
+                  className="w-full py-3 bg-[var(--foreground)] text-[var(--background)] rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
                 >
-                  Begin Interview
+                  Start Interview
                 </button>
-              </section>
-            </>
+              </div>
+            </div>
           )}
 
           {stage === "interview" && (
-            <section className="space-y-4">
+            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs uppercase tracking-wide text-gray-500">
+                <div className="space-y-1">
+                  <p className="text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
                     Question {currentIndex + 1} of {QUESTIONS.length}
                   </p>
-                  <h1 className="text-xl font-semibold mt-2 mb-1">{role} interview</h1>
+                  <h2 className="text-lg font-semibold">{role} Interview</h2>
                 </div>
                 {voiceSupported && (
                   <button
                     type="button"
                     onClick={handleVoiceToggle}
-                    className="text-xs border px-3 py-1 rounded-full border-gray-300 dark:border-gray-700 hover:border-black dark:hover:border-white transition"
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${isRecording
+                        ? "bg-red-500 text-white"
+                        : "border border-[var(--border)] hover:bg-[var(--foreground)] hover:text-[var(--background)]"
+                      }`}
                   >
-                    {isRecording ? "Stop recording" : "Speak answer"}
+                    {isRecording ? (
+                      <>
+                        <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
+                        Recording...
+                      </>
+                    ) : (
+                      "Use Voice"
+                    )}
                   </button>
                 )}
               </div>
 
-              <div className="border border-gray-200 dark:border-gray-800 rounded-lg p-4">
-                <p className="text-sm font-medium mb-2">{QUESTIONS[currentIndex]}</p>
+              <div className="space-y-4">
+                <p className="text-xl font-medium leading-relaxed">{QUESTIONS[currentIndex]}</p>
                 <textarea
                   ref={textAreaRef}
-                  rows={6}
+                  rows={8}
                   value={answers[currentIndex]}
                   onChange={(e) => handleAnswerChange(e.target.value)}
-                  className="mt-2 w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-black text-sm focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white resize-none"
-                  placeholder="Type your answer here, or use voice input if available."
+                  className="w-full px-4 py-3 bg-transparent border border-[var(--border)] rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[var(--foreground)] resize-none transition-shadow placeholder:text-[var(--muted)]"
+                  placeholder="Type your answer here..."
                 />
               </div>
 
-              <div className="flex justify-end">
+              <div className="flex justify-end pt-4">
                 <button
                   type="button"
                   onClick={handleNext}
-                  className="px-4 py-2 text-sm font-medium rounded-md bg-black dark:bg-white text-white dark:text-black hover:opacity-90 transition"
+                  className="px-6 py-2.5 bg-[var(--foreground)] text-[var(--background)] rounded-full text-sm font-medium hover:opacity-90 transition-opacity"
                 >
-                  {currentIndex === QUESTIONS.length - 1 ? "Finish & summarize" : "Next question"}
+                  {currentIndex === QUESTIONS.length - 1 ? "Finish Interview" : "Next Question"}
                 </button>
               </div>
-            </section>
+            </div>
           )}
 
           {stage === "summary" && (
-            <section className="space-y-4">
-              <div>
-                <p className="text-xs uppercase tracking-wide text-gray-500">Interview summary</p>
-                <h1 className="text-2xl font-semibold mt-2 mb-2">
-                  Your {role} mock interview summary
-                </h1>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  This is a condensed view of what you shared. Use it to refine your story and prepare for your next session.
-                </p>
+            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="space-y-2">
+                <p className="text-xs font-medium text-[var(--muted)] uppercase tracking-wider">Results</p>
+                <h1 className="text-3xl font-bold tracking-tight">Interview Analysis</h1>
               </div>
 
-              <div className="border border-gray-200 dark:border-gray-800 rounded-lg p-4">
-                {isSummarizing ? (
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Summarizing your answers…</p>
-                ) : (
-                  <p className="text-sm text-gray-800 dark:text-gray-200 leading-relaxed">{summary}</p>
-                )}
-              </div>
+              {isSummarizing ? (
+                <div className="py-24 flex flex-col items-center justify-center space-y-4">
+                  <div className="w-6 h-6 border-2 border-[var(--border)] border-t-[var(--foreground)] rounded-full animate-spin"></div>
+                  <p className="text-sm text-[var(--muted)]">Generating feedback...</p>
+                </div>
+              ) : analysis ? (
+                <div className="space-y-8">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="md:col-span-2 p-6 border border-[var(--border)] rounded-xl space-y-3">
+                      <h3 className="text-sm font-medium text-[var(--muted)] uppercase tracking-wider">Summary</h3>
+                      <p className="text-sm leading-relaxed">{analysis.summary}</p>
+                    </div>
+                    <div className="p-6 border border-[var(--border)] rounded-xl flex flex-col items-center justify-center space-y-2">
+                      <h3 className="text-sm font-medium text-[var(--muted)] uppercase tracking-wider">Score</h3>
+                      <div className="text-5xl font-bold tracking-tighter">{analysis.rating}</div>
+                    </div>
+                  </div>
 
-              <div className="flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setStage("interview");
-                    setCurrentIndex(0);
-                  }}
-                  className="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 dark:border-gray-700 hover:border-black dark:hover:border-white transition"
-                >
-                  Review answers
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setStage("setup");
-                    setAnswers(Array(QUESTIONS.length).fill(""));
-                    setSummary("");
-                    setCurrentIndex(0);
-                  }}
-                  className="px-4 py-2 text-sm font-medium rounded-md bg-black dark:bg-white text-white dark:text-black hover:opacity-90 transition"
-                >
-                  Start a new interview
-                </button>
-              </div>
-            </section>
+                  <div className="p-6 border border-[var(--border)] rounded-xl space-y-4">
+                    <h3 className="text-sm font-medium text-[var(--muted)] uppercase tracking-wider">Key Improvements</h3>
+                    <ul className="space-y-3">
+                      {analysis.areasOfFocus && analysis.areasOfFocus.map((area, index) => (
+                        <li key={index} className="flex items-start gap-3 text-sm">
+                          <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[var(--foreground)] flex-shrink-0" />
+                          <span>{area}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="flex gap-4 pt-4">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setStage("setup");
+                        setAnswers(Array(QUESTIONS.length).fill(""));
+                        setAnalysis(null);
+                        setCurrentIndex(0);
+                      }}
+                      className="px-6 py-2.5 bg-[var(--foreground)] text-[var(--background)] rounded-full text-sm font-medium hover:opacity-90 transition-opacity"
+                    >
+                      Start New Interview
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-12 space-y-4">
+                  <p className="text-red-500">Failed to load analysis.</p>
+                  <button
+                    onClick={() => setStage("setup")}
+                    className="text-sm underline"
+                  >
+                    Try Again
+                  </button>
+                </div>
+              )}
+            </div>
           )}
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }

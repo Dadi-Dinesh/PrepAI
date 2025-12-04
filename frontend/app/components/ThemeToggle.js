@@ -13,25 +13,16 @@ export default function ThemeToggle() {
   }, []);
 
   if (!mounted) {
-    return (
-      <button className="w-10 h-10 rounded-full border border-black dark:border-white flex items-center justify-center">
-        <div className="w-5 h-5" />
-      </button>
-    );
+    return <div className="w-9 h-9" />;
   }
 
   return (
     <button
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      className="w-10 h-10 rounded-full border border-black dark:border-white flex items-center justify-center hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-all duration-200"
+      className="w-9 h-9 flex items-center justify-center rounded-full border border-[var(--border)] hover:bg-[var(--foreground)] hover:text-[var(--background)] transition-all duration-300"
       aria-label="Toggle theme"
     >
-      {theme === "dark" ? (
-        <FiSun className="w-5 h-5" />
-      ) : (
-        <FiMoon className="w-5 h-5" />
-      )}
+      {theme === "dark" ? <FiSun className="w-4 h-4" /> : <FiMoon className="w-4 h-4" />}
     </button>
   );
 }
-
