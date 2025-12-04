@@ -15,7 +15,7 @@ const SignupForm = () => {
 
   async function signup({ email, password }) {
     try {
-      const res = await fetch(`http://localhost:8080/auth/signup`, {
+      const res = await fetch(`${process.env.NEXT_BACKEND_URL}/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
