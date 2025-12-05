@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import ThemeToggle from "../components/ThemeToggle";
-import Footer from "../components/Footer";
+import Navbar from "../components/Navbar";
 
 export default function DashboardPage() {
   const [selectedInterview, setSelectedInterview] = useState(null);
@@ -43,25 +42,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen flex flex-col bg-white dark:bg-black text-black dark:text-white">
       {/* Navbar */}
-      <header className="border-b border-gray-200 dark:border-gray-800">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="text-lg font-semibold">
-            PrepAI
-          </Link>
-          <nav className="hidden md:flex items-center gap-6 text-sm text-gray-600 dark:text-gray-400">
-            <Link href="/dashboard" className="text-black dark:text-white font-medium">
-              Dashboard
-            </Link>
-            <Link href="/interview" className="hover:text-black dark:hover:text-white">
-              Interview
-            </Link>
-            <Link href="/profile" className="hover:text-black dark:hover:text-white">
-              Profile
-            </Link>
-          </nav>
-          <ThemeToggle />
-        </div>
-      </header>
+      <Navbar />
 
       {/* Body */}
       <main className="flex-1">
