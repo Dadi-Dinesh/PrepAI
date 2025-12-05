@@ -1,9 +1,42 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { FiGithub, FiLinkedin, FiInstagram } from "react-icons/fi";
+import { useAuth } from "../context/AuthContext";
 
 export default function Footer() {
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+  const [feedbackMessage, setFeedbackMessage] = useState("");
+  const { user } = useAuth();
+
+  const handleSubmitFeedback = async (e) => {
+    e.preventDefault();
+    if (!feedbackMessage.trim()) return;
+
+    try {
+      const res = await fetch("https://prepai-6jwi.onrender.com/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: feedbackMessage,
+          userId: user?.id || null,
+        }),
+      });
+
+      if (res.ok) {
+        alert("Thank you for your feedback!");
+        setFeedbackMessage("");
+        setIsFeedbackOpen(false);
+      } else {
+        alert("Failed to submit feedback. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error submitting feedback:", error);
+      alert("An error occurred. Please try again.");
+    }
+  };
+
   return (
     <footer className="w-full border-t border-black dark:border-white bg-white dark:bg-black text-black dark:text-white">
       <div className="max-w-7xl mx-auto px-6 py-16">
@@ -74,12 +107,63 @@ export default function Footer() {
             <Link href="/signup" className="hover:underline">
               Sign Up
             </Link>
+            <button
+              onClick={() => setIsFeedbackOpen(true)}
+              className="hover:underline text-left"
+            >
+              Feedback
+            </button>
           </div>
           <p className="text-sm text-gray-600 dark:text-gray-400">
             © {new Date().getFullYear()} PrepAI. All rights reserved.
           </p>
         </div>
       </div>
+
+      {/* Feedback Modal */}
+      {isFeedbackOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+          onClick={() => setIsFeedbackOpen(false)}
+        >
+          <div
+            className="w-full max-w-md bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-2xl p-6 shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-xl font-semibold mb-4">Submit Feedback</h3>
+            <form onSubmit={handleSubmitFeedback} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Your Feedback
+                </label>
+                <textarea
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-black text-sm resize-none focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white"
+                  rows={4}
+                  placeholder="Let us know what you think..."
+                  value={feedbackMessage}
+                  onChange={(e) => setFeedbackMessage(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="flex justify-end gap-3 mt-6">
+                <button
+                  type="button"
+                  onClick={() => setIsFeedbackOpen(false)}
+                  className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-black dark:bg-white text-white dark:text-black rounded-md text-sm font-medium hover:opacity-90"
+                >
+                  Submit
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </footer>
   );
 }

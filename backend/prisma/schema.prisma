@@ -36,3 +36,10 @@ model Interview {
   suggestions String[]
   notes       String?
 }
+
+model Feedback {
+  id        String   @id @default(cuid())
+  message   String
+  userId    String?
+  createdAt DateTime @default(now())
+}
