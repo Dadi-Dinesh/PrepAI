@@ -11,7 +11,7 @@ export default function SignupPage() {
         {/* Header */}
         <div className="mb-8 flex items-center justify-between">
           <Link href="/" className="text-xl font-semibold">
-            PrepAI
+            IntelliPrep AI
           </Link>
           <ThemeToggle />
         </div>
