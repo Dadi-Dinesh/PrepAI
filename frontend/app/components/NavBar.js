@@ -11,7 +11,7 @@ export default function Navbar() {
     <nav className="w-full border-b border-[var(--border)] sticky top-0 z-50 bg-[var(--background)]/80 backdrop-blur-md">
       <div className="max-w-6xl mx-auto px-6 h-16 flex justify-between items-center">
         <Link href="/" className="text-xl font-bold tracking-tight">
-          PrepAI
+          IntelliPrep AI
         </Link>
 
         <div className="flex items-center gap-6">

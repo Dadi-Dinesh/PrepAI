@@ -9,8 +9,8 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: "PrepAI - Ace Your Next Interview With AI",
-  description: "AI-powered mock interview platform to practice and improve your interview skills",
+  title: "IntelliPrep AI",
+  description: "AI-powered mock interviews",
 };
 
 import { AuthProvider } from "./context/AuthContext";

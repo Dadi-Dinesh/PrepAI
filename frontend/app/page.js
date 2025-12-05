@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Navbar from "./components/NavBar";
 import ThemeToggle from "./components/ThemeToggle";
 
 import { useAuth } from "./context/AuthContext";
@@ -11,34 +12,7 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Navbar */}
-      <nav className="w-full border-b border-[var(--border)] sticky top-0 z-50 bg-[var(--background)]/80 backdrop-blur-md">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex justify-between items-center">
-          <Link href="/" className="text-xl font-bold tracking-tight">
-            PrepAI
-          </Link>
-
-          <div className="flex items-center gap-6">
-            <div className="hidden md:flex items-center gap-6 text-sm font-medium text-[var(--muted)]">
-              {user ? (
-                <Link href="/dashboard" className="hover:text-[var(--foreground)] transition-colors">
-                  Dashboard
-                </Link>
-              ) : (
-                <>
-                  <Link href="/login" className="hover:text-[var(--foreground)] transition-colors">
-                    Login
-                  </Link>
-                  <Link href="/signup" className="hover:text-[var(--foreground)] transition-colors">
-                    Sign Up
-                  </Link>
-                </>
-              )}
-            </div>
-            <div className="w-px h-4 bg-[var(--border)] hidden md:block"></div>
-            <ThemeToggle />
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* Hero Section */}
       <main className="flex-1 flex flex-col items-center justify-center px-6 py-24 text-center">
@@ -112,7 +86,7 @@ export default function Home() {
       {/* Simple Footer */}
       <footer className="border-t border-[var(--border)] py-8 text-center">
         <p className="text-xs text-[var(--muted)]">
-          © {new Date().getFullYear()} PrepAI. All rights reserved.
+          © {new Date().getFullYear()} IntelliPrep AI. All rights reserved.
         </p>
       </footer>
     </div>

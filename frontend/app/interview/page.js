@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import ThemeToggle from "../components/ThemeToggle";
+import Navbar from "../components/NavBar";
 
 const QUESTIONS = [
   "Tell me about yourself and your experience relevant to this role.",
@@ -127,14 +128,7 @@ export default function InterviewPage() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Minimal Navbar */}
-      <header className="border-b border-[var(--border)] sticky top-0 bg-[var(--background)]/80 backdrop-blur-md z-10">
-        <div className="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="font-bold tracking-tight">
-            PrepAI
-          </Link>
-          <ThemeToggle />
-        </div>
-      </header>
+      <Navbar />
 
       {/* Content */}
       <main className="flex-1">

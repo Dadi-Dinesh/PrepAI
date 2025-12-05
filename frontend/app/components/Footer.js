@@ -115,7 +115,7 @@ export default function Footer() {
             </button>
           </div>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            © {new Date().getFullYear()} PrepAI. All rights reserved.
+            © {new Date().getFullYear()} IntelliPrep AI. All rights reserved.
           </p>
         </div>
       </div>
