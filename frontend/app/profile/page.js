@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import ThemeToggle from "../components/ThemeToggle";
 import { Trash2 } from "lucide-react";
-import Footer from "../components/Footer";
+import Footer from "../components/Footer.js";
 import { useAuth } from "../context/AuthContext";
 
 export default function ProfilePage() {

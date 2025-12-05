@@ -105,9 +105,6 @@ export default function DashboardPage() {
         </div>
       </main>
 
-      {/* Footer */}
-      <Footer />
-
       {/* Floating Summary Card */}
       {selectedInterview && (
         <div
