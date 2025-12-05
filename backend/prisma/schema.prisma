@@ -34,4 +34,5 @@ model Interview {
   date        DateTime @default(now())
   summary     String
   suggestions String[]
+  notes       String?
 }

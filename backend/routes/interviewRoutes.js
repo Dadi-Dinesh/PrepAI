@@ -101,4 +101,35 @@ router.delete('/:id', verifyToken, async (req, res) => {
     }
 });
 
+router.put('/:id', verifyToken, async (req, res) => {
+    try {
+        const userId = req.userId;
+        const interviewId = req.params.id;
+        const { notes } = req.body;
+
+        // Verify ownership
+        const interview = await prisma.interview.findUnique({
+            where: { id: interviewId },
+        });
+
+        if (!interview) {
+            return res.status(404).json({ error: 'Interview not found' });
+        }
+
+        if (interview.userId !== userId) {
+            return res.status(403).json({ error: 'Unauthorized' });
+        }
+
+        const updatedInterview = await prisma.interview.update({
+            where: { id: interviewId },
+            data: { notes },
+        });
+
+        res.json(updatedInterview);
+    } catch (error) {
+        console.error('Error in PUT /:id:', error);
+        res.status(500).json({ error: 'Failed to update interview' });
+    }
+});
+
 module.exports = router;

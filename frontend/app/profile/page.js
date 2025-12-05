@@ -178,6 +178,12 @@ export default function ProfilePage() {
             <Link href="/profile" className="text-black dark:text-white font-medium">
               Profile
             </Link>
+            <button
+              onClick={logout}
+              className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white"
+            >
+              Logout
+            </button>
           </nav>
           <ThemeToggle />
         </div>
@@ -435,6 +441,57 @@ export default function ProfilePage() {
                     <li key={index}>{item}</li>
                   ))}
                 </ul>
+              </div>
+
+              <div>
+                <p className="font-medium mb-1">Notes</p>
+                <textarea
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-black text-sm resize-none focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white"
+                  rows={4}
+                  placeholder="Add your personal notes here..."
+                  value={selectedSession.notes || ""}
+                  onChange={(e) =>
+                    setSelectedSession({ ...selectedSession, notes: e.target.value })
+                  }
+                />
+                <div className="flex justify-end mt-2">
+                  <button
+                    onClick={async () => {
+                      try {
+                        const token = localStorage.getItem("token");
+                        const res = await fetch(
+                          `https://prepai-6jwi.onrender.com/interview/${selectedSession.id}`,
+                          {
+                            method: "PUT",
+                            headers: {
+                              "Content-Type": "application/json",
+                              Authorization: `Bearer ${token}`,
+                            },
+                            body: JSON.stringify({ notes: selectedSession.notes }),
+                          }
+                        );
+                        if (res.ok) {
+                          // Update the history list with the new note
+                          setInterviewHistory((prev) =>
+                            prev.map((item) =>
+                              item.id === selectedSession.id
+                                ? { ...item, notes: selectedSession.notes }
+                                : item
+                            )
+                          );
+                          alert("Notes saved!");
+                        } else {
+                          alert("Failed to save notes");
+                        }
+                      } catch (error) {
+                        console.error("Error saving notes:", error);
+                      }
+                    }}
+                    className="px-4 py-2 bg-black dark:bg-white text-white dark:text-black rounded-md text-sm font-medium hover:opacity-90"
+                  >
+                    Save Notes
+                  </button>
+                </div>
               </div>
             </div>
           </div>
