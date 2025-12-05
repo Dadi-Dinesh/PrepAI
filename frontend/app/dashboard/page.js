@@ -1,36 +1,44 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import ThemeToggle from "../components/ThemeToggle";
 import Footer from "../components/Footer";
 
-const interviewHistory = [
-  {
-    id: 1,
-    role: "Frontend Engineer",
-    date: "Jan 05, 2025",
-    summary:
-      "Focused on React hooks, accessibility, and performance optimizations. Feedback emphasized clearer articulation of trade-offs.",
-  },
-  {
-    id: 2,
-    role: "Product Manager",
-    date: "Dec 28, 2024",
-    summary:
-      "Scenario-based questions around prioritization and stakeholder management. Recommended practicing concise storytelling.",
-  },
-  {
-    id: 3,
-    role: "Data Scientist",
-    date: "Dec 15, 2024",
-    summary:
-      "Covered model evaluation, feature engineering, and A/B testing strategy. Suggested deeper focus on experiment pitfalls.",
-  },
-];
-
 export default function DashboardPage() {
   const [selectedInterview, setSelectedInterview] = useState(null);
+  const [interviewHistory, setInterviewHistory] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchRecentHistory();
+  }, []);
+
+  const fetchRecentHistory = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      // Fetch only the 3 most recent interviews
+      const res = await fetch("https://prepai-6jwi.onrender.com/interview/history?page=1&limit=3", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setInterviewHistory(data.interviews);
+      }
+    } catch (error) {
+      console.error("Failed to fetch history", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      month: "short",
+      day: "2-digit",
+      year: "numeric",
+    });
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-white dark:bg-black text-black dark:text-white">
@@ -87,24 +95,31 @@ export default function DashboardPage() {
                 Review summaries from your latest interviews.
               </p>
             </div>
-            <div className="grid gap-4 md:grid-cols-3">
-              {interviewHistory.map((session) => (
-                <button
-                  key={session.id}
-                  onClick={() => setSelectedInterview(session)}
-                  className="border border-gray-200 dark:border-gray-800 rounded-lg p-4 text-left hover:border-black dark:hover:border-white transition"
-                >
-                  <p className="text-xs uppercase tracking-wide text-gray-500">{session.date}</p>
-                  <h3 className="text-base font-semibold mt-2">{session.role}</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 line-clamp-2">
-                    {session.summary}
-                  </p>
-                  <span className="text-xs font-medium text-gray-500 mt-4 inline-block">
-                    View summary →
-                  </span>
-                </button>
-              ))}
-            </div>
+
+            {loading ? (
+              <div className="text-sm text-gray-500">Loading recent sessions...</div>
+            ) : interviewHistory.length === 0 ? (
+              <div className="text-sm text-gray-500 italic">No recent interviews found.</div>
+            ) : (
+              <div className="grid gap-4 md:grid-cols-3">
+                {interviewHistory.map((session) => (
+                  <button
+                    key={session.id}
+                    onClick={() => setSelectedInterview(session)}
+                    className="border border-gray-200 dark:border-gray-800 rounded-lg p-4 text-left hover:border-black dark:hover:border-white transition flex flex-col h-full"
+                  >
+                    <p className="text-xs uppercase tracking-wide text-gray-500">{formatDate(session.date)}</p>
+                    <h3 className="text-base font-semibold mt-2 mb-2">{session.role}</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-3 flex-1">
+                      {session.summary}
+                    </p>
+                    <span className="text-xs font-medium text-gray-500 mt-4 inline-block">
+                      View summary →
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
           </section>
         </div>
       </main>
@@ -124,7 +139,7 @@ export default function DashboardPage() {
           >
             <div className="flex items-center justify-between mb-4">
               <div>
-                <p className="text-xs uppercase tracking-wide text-gray-500">{selectedInterview.date}</p>
+                <p className="text-xs uppercase tracking-wide text-gray-500">{formatDate(selectedInterview.date)}</p>
                 <h3 className="text-xl font-semibold mt-1">{selectedInterview.role}</h3>
               </div>
               <button

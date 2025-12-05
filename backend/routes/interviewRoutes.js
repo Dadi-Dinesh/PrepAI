@@ -38,16 +38,23 @@ router.get('/history', verifyToken, async (req, res) => {
         const userId = req.userId;
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 5;
+        const sort = req.query.sort === 'oldest' ? 'asc' : 'desc';
+        const roleFilter = req.query.role || undefined;
         const skip = (page - 1) * limit;
+
+        const whereClause = {
+            userId,
+            ...(roleFilter && { role: roleFilter }),
+        };
 
         const [interviews, total] = await Promise.all([
             prisma.interview.findMany({
-                where: { userId },
-                orderBy: { date: 'desc' },
+                where: whereClause,
+                orderBy: { date: sort },
                 skip,
                 take: limit,
             }),
-            prisma.interview.count({ where: { userId } })
+            prisma.interview.count({ where: whereClause })
         ]);
 
         res.json({
