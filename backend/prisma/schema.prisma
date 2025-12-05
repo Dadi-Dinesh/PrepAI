@@ -14,9 +14,24 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String      @id @default(cuid())
+  email      String      @unique
+  password   String
+  name       String?
+  role       String?
+  experience String?
+  location   String?
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  interviews Interview[]
+}
+
+model Interview {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  role        String
+  date        DateTime @default(now())
+  summary     String
+  suggestions String[]
 }

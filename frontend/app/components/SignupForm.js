@@ -13,12 +13,12 @@ const SignupForm = () => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  async function signup({ email, password }) {
+  async function signup({ email, password, name }) {
     try {
       const res = await fetch(`https://prepai-6jwi.onrender.com/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, name }),
       });
 
       if (!res.ok) {
@@ -55,7 +55,7 @@ const SignupForm = () => {
     setIsLoading(true);
 
     try {
-      await signup({ email, password });
+      await signup({ email, password, name });
       router.push("/login");
     } catch (err) {
       setError(err.message || "Signup failed");
@@ -86,7 +86,7 @@ const SignupForm = () => {
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-black focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white text-sm"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-black focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white text-sm placeholder-gray-500 dark:placeholder-gray-400"
             placeholder="John Doe"
           />
         </div>
@@ -98,7 +98,7 @@ const SignupForm = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-black focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white text-sm"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-black focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white text-sm placeholder-gray-500 dark:placeholder-gray-400"
             placeholder="you@example.com"
           />
         </div>
@@ -110,7 +110,7 @@ const SignupForm = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-black focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white text-sm"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-black focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white text-sm placeholder-gray-500 dark:placeholder-gray-400"
             placeholder="Create a password"
           />
         </div>
@@ -122,7 +122,7 @@ const SignupForm = () => {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-black focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white text-sm"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-black focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white text-sm placeholder-gray-500 dark:placeholder-gray-400"
             placeholder="Confirm your password"
           />
         </div>

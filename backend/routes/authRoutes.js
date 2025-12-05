@@ -8,12 +8,12 @@ dotenv.config();
 const router = express.Router();
 
 router.post('/signup', async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, name } = req.body;
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await prisma.user.create({
-      data: { email, password: hashedPassword },
+      data: { email, password: hashedPassword, name },
     });
     res.status(201).json(newUser);
   } catch (error) {
@@ -45,7 +45,7 @@ router.post('/login', async (req, res) => {
     res.status(200).json({ message: 'Login successful', token: token });
   } catch (error) {
     console.log(error)
-    res.status(400).json({ error: 'Login failed'});
+    res.status(400).json({ error: 'Login failed' });
   }
 });
 
