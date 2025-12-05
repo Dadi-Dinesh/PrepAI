@@ -3,7 +3,9 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import ThemeToggle from "../components/ThemeToggle";
+import { Trash2 } from "lucide-react";
 import Footer from "../components/Footer";
+import { useAuth } from "../context/AuthContext";
 
 export default function ProfilePage() {
   const [user, setUser] = useState(null);
@@ -96,6 +98,52 @@ export default function ProfilePage() {
     }
   };
 
+  const handleDelete = async (e, interviewId) => {
+    e.stopPropagation(); // Prevent opening the modal
+    if (!confirm("Are you sure you want to delete this interview?")) return;
+
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`https://prepai-6jwi.onrender.com/interview/${interviewId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (res.ok) {
+        // Refresh the list
+        fetchHistory(pagination.page);
+        // Update profile stats if needed (optional, or refetch profile)
+        fetchProfile();
+      } else {
+        alert("Failed to delete interview");
+      }
+    } catch (error) {
+      console.error("Error deleting interview:", error);
+    }
+  };
+
+  const { logout } = useAuth();
+
+  const handleDeleteProfile = async () => {
+    if (!confirm("Are you sure you want to delete your profile? This action cannot be undone and will delete all your data.")) return;
+
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch("https://prepai-6jwi.onrender.com/profile", {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (res.ok) {
+        logout();
+      } else {
+        alert("Failed to delete profile");
+      }
+    } catch (error) {
+      console.error("Error deleting profile:", error);
+    }
+  };
+
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       month: "short",
@@ -145,12 +193,20 @@ export default function ProfilePage() {
                 <p className="text-xs uppercase tracking-wide text-gray-500">Profile</p>
                 <h1 className="text-2xl font-semibold mt-1">{user?.name || "User"}</h1>
               </div>
-              <button
-                onClick={() => setIsEditing(true)}
-                className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white underline"
-              >
-                Edit
-              </button>
+              <div className="flex gap-4">
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white underline"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={handleDeleteProfile}
+                  className="text-sm font-medium text-red-500 hover:text-red-600 underline"
+                >
+                  Delete Profile
+                </button>
+              </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 text-sm">
@@ -217,10 +273,10 @@ export default function ProfilePage() {
             ) : (
               <div className="border border-gray-200 dark:border-gray-800 rounded-xl divide-y divide-gray-200 dark:divide-gray-800">
                 {interviewHistory.map((session) => (
-                  <button
+                  <div
                     key={session.id}
                     onClick={() => setSelectedSession(session)}
-                    className="w-full text-left px-4 py-3 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-900 transition"
+                    className="w-full text-left px-4 py-3 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-900 transition cursor-pointer group"
                   >
                     <div>
                       <p className="text-xs uppercase tracking-wide text-gray-500">
@@ -228,8 +284,17 @@ export default function ProfilePage() {
                       </p>
                       <p className="text-sm font-medium mt-1">{session.role}</p>
                     </div>
-                    <span className="text-xs font-medium text-gray-500">View details →</span>
-                  </button>
+                    <div className="flex items-center gap-4">
+                      <span className="text-xs font-medium text-gray-500 group-hover:text-black dark:group-hover:text-white transition-colors">View details →</span>
+                      <button
+                        onClick={(e) => handleDelete(e, session.id)}
+                        className="p-2 text-gray-400 hover:text-red-500 transition-colors"
+                        title="Delete interview"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
                 ))}
               </div>
             )}

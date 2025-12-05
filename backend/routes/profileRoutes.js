@@ -43,9 +43,32 @@ router.put('/', verifyToken, async (req, res) => {
         updatedAt: true
       },
     });
-    res.status(200).json(updatedUser);
+
+    res.json(updatedUser);
   } catch (error) {
-    res.status(400).json({ error: 'Failed to update profile' });
+    console.error('Error updating profile:', error);
+    res.status(500).json({ error: 'Failed to update profile' });
+  }
+});
+
+router.delete('/', verifyToken, async (req, res) => {
+  try {
+    const userId = req.userId;
+
+    // Delete all interviews first
+    await prisma.interview.deleteMany({
+      where: { userId },
+    });
+
+    // Delete the user
+    await prisma.user.delete({
+      where: { id: userId },
+    });
+
+    res.json({ message: 'User and associated data deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting profile:', error);
+    res.status(500).json({ error: 'Failed to delete profile' });
   }
 });
 

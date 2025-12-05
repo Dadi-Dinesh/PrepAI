@@ -72,4 +72,33 @@ router.get('/history', verifyToken, async (req, res) => {
     }
 });
 
+router.delete('/:id', verifyToken, async (req, res) => {
+    try {
+        const userId = req.userId;
+        const interviewId = req.params.id;
+
+        // Verify ownership
+        const interview = await prisma.interview.findUnique({
+            where: { id: interviewId },
+        });
+
+        if (!interview) {
+            return res.status(404).json({ error: 'Interview not found' });
+        }
+
+        if (interview.userId !== userId) {
+            return res.status(403).json({ error: 'Unauthorized' });
+        }
+
+        await prisma.interview.delete({
+            where: { id: interviewId },
+        });
+
+        res.json({ message: 'Interview deleted successfully' });
+    } catch (error) {
+        console.error('Error in DELETE /:id:', error);
+        res.status(500).json({ error: 'Failed to delete interview' });
+    }
+});
+
 module.exports = router;
