@@ -13,6 +13,9 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({ page: 1, totalPages: 1 });
 
+  const [sortOrder, setSortOrder] = useState("latest");
+  const [roleFilter, setRoleFilter] = useState("");
+
   // Edit Form State
   const [editForm, setEditForm] = useState({
     name: "",
@@ -24,7 +27,7 @@ export default function ProfilePage() {
   useEffect(() => {
     fetchProfile();
     fetchHistory(1);
-  }, []);
+  }, [sortOrder, roleFilter]);
 
   const fetchProfile = async () => {
     try {
@@ -50,7 +53,12 @@ export default function ProfilePage() {
   const fetchHistory = async (page) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`https://prepai-6jwi.onrender.com/interview/history?page=${page}&limit=5`, {
+      let url = `https://prepai-6jwi.onrender.com/interview/history?page=${page}&limit=5&sort=${sortOrder}`;
+      if (roleFilter) {
+        url += `&role=${encodeURIComponent(roleFilter)}`;
+      }
+
+      const res = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
@@ -171,11 +179,37 @@ export default function ProfilePage() {
 
           {/* Interview History */}
           <section>
-            <div className="mb-4">
-              <h2 className="text-lg font-semibold">Interview history</h2>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Open a session to see the summary and focused suggestions.
-              </p>
+            <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-lg font-semibold">Interview history</h2>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Open a session to see the summary and focused suggestions.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <select
+                  value={roleFilter}
+                  onChange={(e) => setRoleFilter(e.target.value)}
+                  className="px-3 py-2 bg-transparent border border-gray-200 dark:border-gray-800 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white"
+                >
+                  <option value="">All Roles</option>
+                  <option value="Frontend Engineer">Frontend Engineer</option>
+                  <option value="Backend Engineer">Backend Engineer</option>
+                  <option value="Full Stack Engineer">Full Stack Engineer</option>
+                  <option value="Product Manager">Product Manager</option>
+                  <option value="Data Scientist">Data Scientist</option>
+                </select>
+
+                <select
+                  value={sortOrder}
+                  onChange={(e) => setSortOrder(e.target.value)}
+                  className="px-3 py-2 bg-transparent border border-gray-200 dark:border-gray-800 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white"
+                >
+                  <option value="latest">Latest</option>
+                  <option value="oldest">Oldest</option>
+                </select>
+              </div>
             </div>
 
             {interviewHistory.length === 0 ? (
@@ -201,7 +235,7 @@ export default function ProfilePage() {
             )}
 
             {/* Pagination */}
-            {pagination.totalPages > 1 && (
+            {pagination.totalPages > 0 && (
               <div className="flex items-center justify-center gap-4 mt-6 text-sm">
                 <button
                   disabled={pagination.page === 1}
