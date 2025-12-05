@@ -4,32 +4,15 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
+import { useAuth } from "../context/AuthContext";
+
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-
-  const login = async ({ email, password }) => {
-    const response = await fetch(`https://prepai-6jwi.onrender.com/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-
-    if (!response.ok) {
-      let errorMessage = "Login failed";
-      try {
-        const data = await response.json();
-        errorMessage = data.error || data.message || errorMessage;
-      } catch {
-        errorMessage = `Login failed: ${response.status} ${response.statusText} `;
-      }
-      throw new Error(errorMessage);
-    }
-    return response.json();
-  };
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,8 +20,7 @@ const LoginForm = () => {
     setIsLoading(true);
 
     try {
-      const data = await login({ email, password });
-      localStorage.setItem("token", data.token);
+      await login(email, password);
       router.push("/dashboard");
     } catch (err) {
       setError(err.message || "Invalid email or password");

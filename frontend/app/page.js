@@ -3,7 +3,11 @@
 import Link from "next/link";
 import ThemeToggle from "./components/ThemeToggle";
 
+import { useAuth } from "./context/AuthContext";
+
 export default function Home() {
+  const { user } = useAuth();
+
   return (
     <div className="min-h-screen flex flex-col">
       {/* Navbar */}
@@ -15,12 +19,20 @@ export default function Home() {
 
           <div className="flex items-center gap-6">
             <div className="hidden md:flex items-center gap-6 text-sm font-medium text-[var(--muted)]">
-              <Link href="/login" className="hover:text-[var(--foreground)] transition-colors">
-                Login
-              </Link>
-              <Link href="/signup" className="hover:text-[var(--foreground)] transition-colors">
-                Sign Up
-              </Link>
+              {user ? (
+                <Link href="/dashboard" className="hover:text-[var(--foreground)] transition-colors">
+                  Dashboard
+                </Link>
+              ) : (
+                <>
+                  <Link href="/login" className="hover:text-[var(--foreground)] transition-colors">
+                    Login
+                  </Link>
+                  <Link href="/signup" className="hover:text-[var(--foreground)] transition-colors">
+                    Sign Up
+                  </Link>
+                </>
+              )}
             </div>
             <div className="w-px h-4 bg-[var(--border)] hidden md:block"></div>
             <ThemeToggle />
@@ -44,18 +56,29 @@ export default function Home() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-            <Link
-              href="/signup"
-              className="px-8 py-3 bg-[var(--foreground)] text-[var(--background)] rounded-full font-medium text-sm hover:opacity-90 transition-opacity"
-            >
-              Start Mock Interview
-            </Link>
-            <Link
-              href="/login"
-              className="px-8 py-3 border border-[var(--border)] rounded-full font-medium text-sm hover:bg-[var(--foreground)] hover:text-[var(--background)] transition-all"
-            >
-              Login
-            </Link>
+            {user ? (
+              <Link
+                href="/dashboard"
+                className="px-8 py-3 bg-[var(--foreground)] text-[var(--background)] rounded-full font-medium text-sm hover:opacity-90 transition-opacity"
+              >
+                Go to Dashboard
+              </Link>
+            ) : (
+              <>
+                <Link
+                  href="/signup"
+                  className="px-8 py-3 bg-[var(--foreground)] text-[var(--background)] rounded-full font-medium text-sm hover:opacity-90 transition-opacity"
+                >
+                  Start Mock Interview
+                </Link>
+                <Link
+                  href="/login"
+                  className="px-8 py-3 border border-[var(--border)] rounded-full font-medium text-sm hover:bg-[var(--foreground)] hover:text-[var(--background)] transition-all"
+                >
+                  Login
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </main>

@@ -13,12 +13,16 @@ export const metadata = {
   description: "AI-powered mock interview platform to practice and improve your interview skills",
 };
 
+import { AuthProvider } from "./context/AuthContext";
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          {children}
+          <AuthProvider>
+            {children}
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>
